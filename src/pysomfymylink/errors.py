@@ -30,3 +30,15 @@ class SomfyMyLinkApiError(SomfyMyLinkError):
         self.code = code
         self.message = message
         super().__init__(message if code is None else f"[{code}] {message}")
+
+
+class SomfyMyLinkAuthError(SomfyMyLinkApiError):
+    """Raised when the hub rejects the System ID.
+
+    A subclass of :class:`SomfyMyLinkApiError` for the specific case where the
+    hub reports an authentication failure (see
+    :data:`~pysomfymylink.const.AUTH_ERROR_CODES`). Callers that only care that
+    *some* API error occurred can keep catching :class:`SomfyMyLinkApiError`;
+    callers that need to distinguish a bad System ID (e.g. to trigger a
+    reauthentication flow) can catch this instead.
+    """

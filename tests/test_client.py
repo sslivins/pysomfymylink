@@ -8,6 +8,7 @@ from pysomfymylink import (
     Shade,
     SomfyMyLink,
     SomfyMyLinkApiError,
+    SomfyMyLinkAuthError,
     SomfyMyLinkConnectionError,
     SomfyMyLinkTimeoutError,
 )
@@ -57,12 +58,23 @@ async def test_keepalive_frames_are_stripped(fake_hub: FakeHub) -> None:
     assert len(shades) == 2
 
 
-async def test_api_error_raises(fake_hub: FakeHub) -> None:
+async def test_bad_system_id_raises_auth_error(fake_hub: FakeHub) -> None:
     fake_hub.client.system_id = "bad"
+    with pytest.raises(SomfyMyLinkAuthError) as excinfo:
+        await fake_hub.client.status_info()
+    assert excinfo.value.code == -32652
+    assert "auth" in excinfo.value.message.lower()
+    # It must remain catchable as the base API error too.
+    assert isinstance(excinfo.value, SomfyMyLinkApiError)
+
+
+async def test_non_auth_api_error_raises_generic_error(fake_hub: FakeHub) -> None:
+    fake_hub.api_error = True
     with pytest.raises(SomfyMyLinkApiError) as excinfo:
         await fake_hub.client.status_info()
-    assert excinfo.value.code == 4
-    assert "System ID" in excinfo.value.message
+    # A non-auth JSON-RPC error must NOT be classified as an auth failure.
+    assert not isinstance(excinfo.value, SomfyMyLinkAuthError)
+    assert excinfo.value.code == -32601
 
 
 async def test_connection_refused_raises_typed_error(unused_tcp_port: int) -> None:

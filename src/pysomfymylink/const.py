@@ -16,3 +16,9 @@ DEFAULT_TIMEOUT: float = 5.0
 
 # Wildcard target that addresses every configured cover/motor.
 ALL_TARGETS: str = "*.*"
+
+# JSON-RPC ``error`` codes the hub returns when the System ID is rejected.
+# Observed on real hardware: ``{"code": -32652, "message": "Invalid auth"}``.
+# A frozenset so additional firmware codes can be added without touching the
+# classification logic in the client.
+AUTH_ERROR_CODES: frozenset[int] = frozenset({-32652})

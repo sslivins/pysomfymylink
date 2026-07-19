@@ -34,6 +34,8 @@ class FakeHub:
     corrupt: bool = False
     # Accept the connection but never reply, to exercise the read timeout.
     silent: bool = False
+    # Reply with a non-auth JSON-RPC error to exercise generic API errors.
+    api_error: bool = False
 
     async def _handle(
         self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter
@@ -59,7 +61,17 @@ class FakeHub:
             writer.close()
             return
         if auth == "bad":
-            resp = {"error": {"code": 4, "message": "Invalid System ID"}, "id": mid}
+            resp = {
+                "error": {"code": -32652, "message": "Invalid auth"},
+                "id": mid,
+            }
+        elif self.api_error:
+            # A non-auth JSON-RPC error (e.g. an unknown method), which must
+            # surface as a generic SomfyMyLinkApiError, not an auth error.
+            resp = {
+                "error": {"code": -32601, "message": "Method not found"},
+                "id": mid,
+            }
         elif method == "mylink.status.info":
             resp = {"result": FAKE_SHADES, "id": mid}
         else:

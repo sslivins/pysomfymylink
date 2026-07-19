@@ -6,16 +6,17 @@ credit.
 """
 
 from .client import SomfyMyLink
-from .const import ALL_TARGETS, DEFAULT_PORT, DEFAULT_TIMEOUT
+from .const import ALL_TARGETS, AUTH_ERROR_CODES, DEFAULT_PORT, DEFAULT_TIMEOUT
 from .errors import (
     SomfyMyLinkApiError,
+    SomfyMyLinkAuthError,
     SomfyMyLinkConnectionError,
     SomfyMyLinkError,
     SomfyMyLinkTimeoutError,
 )
 from .models import Shade
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 __all__ = [
     "SomfyMyLink",
@@ -24,7 +25,9 @@ __all__ = [
     "SomfyMyLinkConnectionError",
     "SomfyMyLinkTimeoutError",
     "SomfyMyLinkApiError",
+    "SomfyMyLinkAuthError",
     "ALL_TARGETS",
+    "AUTH_ERROR_CODES",
     "DEFAULT_PORT",
     "DEFAULT_TIMEOUT",
     "__version__",

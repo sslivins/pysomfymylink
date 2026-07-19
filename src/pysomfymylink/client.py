@@ -30,9 +30,10 @@ import logging
 import re
 from typing import Any
 
-from .const import ALL_TARGETS, DEFAULT_PORT, DEFAULT_TIMEOUT
+from .const import ALL_TARGETS, AUTH_ERROR_CODES, DEFAULT_PORT, DEFAULT_TIMEOUT
 from .errors import (
     SomfyMyLinkApiError,
+    SomfyMyLinkAuthError,
     SomfyMyLinkConnectionError,
     SomfyMyLinkTimeoutError,
 )
@@ -100,10 +101,14 @@ class SomfyMyLink:
         response = await self._request(message, message_id)
         if "error" in response:
             error = response["error"] or {}
-            raise SomfyMyLinkApiError(
-                error.get("message", "Unknown MyLink error"),
-                code=error.get("code"),
+            code = error.get("code")
+            message_text = error.get("message", "Unknown MyLink error")
+            error_cls = (
+                SomfyMyLinkAuthError
+                if code in AUTH_ERROR_CODES
+                else SomfyMyLinkApiError
             )
+            raise error_cls(message_text, code=code)
         return response.get("result")
 
     async def _request(self, message: dict[str, Any], message_id: int) -> dict[str, Any]:

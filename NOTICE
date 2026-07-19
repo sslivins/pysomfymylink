@@ -1,0 +1,8 @@
+This project is a clean-room rewrite of "somfy-mylink-synergy"
+Copyright (c) 2019 Ben Dews (https://github.com/bendews/somfy-mylink-synergy),
+which is also MIT licensed.
+
+The original library's public method surface informed this one; the transport
+layer (connection handling, framing, and the fix for the connection-timeout
+deadlock) was rewritten from scratch. Full credit and thanks to Ben Dews for
+the original work and protocol reverse-engineering.

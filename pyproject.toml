@@ -1,0 +1,74 @@
+# pyproject.toml
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pysomfymylink"
+version = "0.0.1"
+description = "Async Python client for the Somfy MyLink Synergy socket API (a maintained rewrite of somfy-mylink-synergy)"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [
+  { name = "Stefan Slivinski", email = "sslivins@gmail.com" }
+]
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Home Automation"
+]
+# No runtime dependencies: the client uses only the stdlib asyncio socket API.
+dependencies = []
+
+[project.optional-dependencies]
+tests = [
+    "pytest>=8.3.4",
+    "pytest-asyncio>=0.25.3",
+    "python-dotenv>=1.0.1",
+    "pytest-cov>=5.0.0",
+    "ruff>=0.6.0",
+    "mypy>=1.10.0"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/sslivins/pysomfymylink"
+"Bug Tracker" = "https://github.com/sslivins/pysomfymylink/issues"
+
+[project.scripts]
+pysomfymylink = "pysomfymylink.__main__:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+pysomfymylink = ["py.typed"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "ASYNC"]
+ignore = ["S101"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S105", "S106"]
+
+[tool.mypy]
+python_version = "3.11"
+strict_optional = true
+warn_unused_ignores = true
+ignore_missing_imports = false
+
+[tool.coverage.run]
+# The __main__ CLI is a manual smoke-test entry point, not unit-tested.
+omit = ["src/pysomfymylink/__main__.py"]
+
+[tool.coverage.report]
+exclude_lines = ["pragma: no cover", "if __name__ == .__main__.:"]
